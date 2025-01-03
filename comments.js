@@ -1,34 +1,23 @@
-//Create web sever
-const http = require('http');
-const fs = require('fs');
-const url = require('url');
-const port = 8080;
-const server = http.createServer((req, res) => {
-    res.writeHead(200, {
-        'Content-Type': 'text/html'
-    });
-    fs.readFile('comments.html', (err, data) => {
-        if (err) {
-            console.error(err);
-            res.end();
-        } else {
-            res.write(data);
-            res.end();
-        }
-    });
+// Create web server
+const express = require('express');
+const app = express();
+const PORT = 3000;
+
+// Import comments array
+const comments = require('./comments');
+
+// Route to get all comments
+app.get('/comments', (req, res) => {
+  res.send(comments);
 });
-server.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}/`);
+
+// Route to get comments by ID
+app.get('/comments/:id', (req, res) => {
+  const comment = comments.find((comment) => comment.id === parseInt(req.params.id));
+  res.send(comment);
 });
-//Create a list of comments
-let comments = [];
-//Read comments from file
-fs.readFile('comments.json', (err, data) => {
-    if (err) {
-        console.error(err);
-    } else {
-        comments = JSON.parse(data);
-    }
+
+// Start server
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
 });
-//Handle POST requests
-server.on
